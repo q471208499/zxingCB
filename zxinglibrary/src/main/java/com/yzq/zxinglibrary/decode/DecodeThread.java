@@ -53,8 +53,12 @@ public final class DecodeThread extends Thread {
         if (activity.config.isDecodeBarCode()) {
             decodeFormats.addAll(DecodeFormatManager.ONE_D_FORMATS);
         }
-        decodeFormats.addAll(DecodeFormatManager.DATA_MATRIX_FORMATS);
-        decodeFormats.addAll(DecodeFormatManager.QR_CODE_FORMATS);
+        if (activity.config.isDataMatrlx()) {
+            decodeFormats.addAll(DecodeFormatManager.DATA_MATRIX_FORMATS);
+        }
+        if (activity.config.isQRCode()) {
+            decodeFormats.addAll(DecodeFormatManager.QR_CODE_FORMATS);
+        }
 
         hints.put(DecodeHintType.POSSIBLE_FORMATS, decodeFormats);
 

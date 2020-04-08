@@ -28,8 +28,12 @@ public class ZxingConfig implements Serializable {
     private boolean isShowAlbum = true;
     /*是否解析条形码*/
     private boolean isDecodeBarCode = true;
+    /*是否解析DATA_MATRIX_FORMATS*/
+    private boolean isDataMatrlx = true;
     /*是否全屏扫描*/
     private boolean isFullScreenScan = true;
+    /*是否解析QR_CODE_FORMATS*/
+    private boolean isQRCode = true;
 
     /*四个角的颜色*/
     @ColorRes
@@ -121,5 +125,21 @@ public class ZxingConfig implements Serializable {
 
     public void setShowAlbum(boolean showAlbum) {
         isShowAlbum = showAlbum;
+    }
+
+    public boolean isDataMatrlx() {
+        return isDataMatrlx;
+    }
+
+    public void setDataMatrlx(boolean dataMatrlx) {
+        isDataMatrlx = dataMatrlx;
+    }
+
+    public boolean isQRCode() {
+        return isQRCode;
+    }
+
+    public void setQRCode(boolean QRCode) {
+        isQRCode = QRCode;
     }
 }
