@@ -1,3 +1,7 @@
+复制于：https://github.com/yuzhiqiang1993/zxing
+
+
+
 [![](https://jitpack.io/v/yuzhiqiang1993/zxing.svg)](https://jitpack.io/#yuzhiqiang1993/zxing)
 [![](https://img.shields.io/cocoapods/l/AFNetworking.svg)](https://github.com/yuzhiqiang1993/zxing/blob/master/LICENSE.txt)
 
