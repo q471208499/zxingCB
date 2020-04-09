@@ -1,6 +1,8 @@
 package com.yzq.zxinglibrary.android;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
@@ -8,18 +10,24 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.LinearLayoutCompat;
-import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.Result;
 import com.yzq.zxinglibrary.R;
@@ -49,9 +57,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     private AppCompatImageView flashLightIv;
     private TextView flashLightTv;
     private AppCompatImageView backIv;
-    private LinearLayoutCompat flashLightLayout;
-    private LinearLayoutCompat albumLayout;
-    private LinearLayoutCompat bottomLayout;
+    private LinearLayoutCompat flashLightLayout, albumLayout, bottomLayout, manualInputLayout;
     private boolean hasSurface;
     private InactivityTimer inactivityTimer;
     private BeepManager beepManager;
@@ -116,10 +122,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         beepManager = new BeepManager(this);
         beepManager.setPlayBeep(config.isPlayBeep());
         beepManager.setVibrate(config.isShake());
-
-
     }
-
 
     private void initView() {
         previewView = findViewById(R.id.preview_view);
@@ -140,11 +143,13 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         albumLayout = findViewById(R.id.albumLayout);
         albumLayout.setOnClickListener(this);
         bottomLayout = findViewById(R.id.bottomLayout);
-
+        manualInputLayout = findViewById(R.id.manualInputLayout);
+        manualInputLayout.setOnClickListener(this);
 
         switchVisibility(bottomLayout, config.isShowbottomLayout());
         switchVisibility(flashLightLayout, config.isShowFlashLight());
         switchVisibility(albumLayout, config.isShowAlbum());
+        switchVisibility(manualInputLayout, config.isManualInput());
 
 
         /*有闪光灯就显示手电筒按钮  否则不显示*/
@@ -155,7 +160,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         }
 
     }
-
 
     /**
      * @param pm
@@ -203,10 +207,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         intent.putExtra(Constant.CODED_CONTENT, rawResult.getText());
         setResult(RESULT_OK, intent);
         this.finish();
-
-
     }
-
 
     private void switchVisibility(View view, boolean b) {
         if (b) {
@@ -215,7 +216,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             view.setVisibility(View.GONE);
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -275,7 +275,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     @Override
     protected void onPause() {
 
-        Log.i("CaptureActivity","onPause");
+        Log.i("CaptureActivity", "onPause");
         if (handler != null) {
             handler.quitSynchronously();
             handler = null;
@@ -306,7 +306,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         }
     }
 
-
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         hasSurface = false;
@@ -333,11 +332,43 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             startActivityForResult(intent, Constant.REQUEST_IMAGE);
         } else if (id == R.id.backIv) {
             finish();
+        } else if (id == R.id.manualInputLayout) {
+            showDialog(view);
         }
-
-
     }
 
+    private void showDialog(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Light_Dialog_Alert);
+        builder.setTitle(R.string.manual_input);
+        View inputView = LayoutInflater.from(this).inflate(R.layout.dialog_input_view, (ViewGroup) view.getParent(), false);
+        final EditText editText = inputView.findViewById(R.id.dialog_edit);
+        editText.setMaxLines(config.getManualInputMaxLength());
+        builder.setView(inputView);
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                hideInput();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String s = editText.getText().toString();
+                if (TextUtils.isEmpty(s) || s.length() < 14) {
+                    Toast.makeText(CaptureActivity.this, "长度不规范", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Result result = new Result(s, null, null, null);
+                handleDecode(result);
+            }
+        });
+        builder.show();
+    }
+
+    protected void hideInput() {
+        InputMethodManager manager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -358,10 +389,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
                     Toast.makeText(CaptureActivity.this, R.string.scan_failed_tip, Toast.LENGTH_SHORT).show();
                 }
             }).run();
-
-
         }
     }
-
-
 }

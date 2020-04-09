@@ -26,6 +26,10 @@ public class ZxingConfig implements Serializable {
     private boolean isShowFlashLight = true;
     /*是否显示相册按钮*/
     private boolean isShowAlbum = true;
+    /*是否显示手动输入，默认false不显示*/
+    private boolean isManualInput = false;
+    /*手动输入最大长度*/
+    private int manualInputMaxLength = 14;
     /*是否解析条形码*/
     private boolean isDecodeBarCode = true;
     /*是否解析DATA_MATRIX_FORMATS*/
@@ -141,5 +145,21 @@ public class ZxingConfig implements Serializable {
 
     public void setQRCode(boolean QRCode) {
         isQRCode = QRCode;
+    }
+
+    public boolean isManualInput() {
+        return isManualInput;
+    }
+
+    public void setManualInput(boolean manualInput) {
+        isManualInput = manualInput;
+    }
+
+    public int getManualInputMaxLength() {
+        return manualInputMaxLength;
+    }
+
+    public void setManualInputMaxLength(int manualInputMaxLength) {
+        this.manualInputMaxLength = manualInputMaxLength;
     }
 }

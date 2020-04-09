@@ -55,7 +55,6 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/bottomLayout"
             android:layout_width="match_parent"
@@ -112,6 +111,31 @@
                     android:text="@string/gallery"
 
                     android:textColor="#ffffff" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/manualInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/manualInputIv"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    app:srcCompat="@drawable/ic_manual_input" />
+
+                <TextView
+                    android:id="@+id/manualInputTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:text="@string/manual_input"
+                    android:textColor="#ffffff" />
+
             </androidx.appcompat.widget.LinearLayoutCompat>
 
 

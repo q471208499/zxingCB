@@ -9,5 +9,7 @@
     <string name="gallery">相册</string>
     <string name="scan_failed_tip">图片解析失败，换个图片试试.</string>
 
+    <string name="manual_input">手动输入</string>
+
 
 </resources>
